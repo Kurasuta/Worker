@@ -2,7 +2,7 @@
 
 ## extracts from PEs
 * sha256, md5 and sha1 of file itself
-* sha256 of each section (also record section position)
+* sha256 of each section (also record section position and name)
 * debugging info (GUID and pdb path, https://github.com/erocarrera/pefile/issues/62) 
 * file magic++
     * aut2exe
