@@ -18,3 +18,4 @@
 * signing certificate hashes (https://blog.didierstevens.com/programs/authenticode-tools/) 
 * .NET GUIDs (https://www.codeproject.com/Articles/12585/The-NET-File-Format)
 * Export table timestamp, Debugger section timestamp, Resources timestamp (https://github.com/smarttechnologies/peparser/blob/master/README.md) 
+* file size, entry point, overlay size and hash
