@@ -1,32 +1,34 @@
 import argparse
 import pefile
 import os
+import sys
 import inspect
 import importlib
 from pprint import pprint
 
 from data import Sample, JsonFactory
 
+script_folder = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(script_folder)
+
 parser = argparse.ArgumentParser(description='extracts metadata from PE file (part of the Kurasuta project)')
 parser.add_argument('file_name', metavar='FILENAME', help='file to process')
-
 args = parser.parse_args()
 
 file_data = open(args.file_name, 'rb').read()
 pe = pefile.PE(data=file_data)
-extractor_folder = "extractor"
 
 
 def get_extractors():
     extractors = {}
-    for extractor_file_name in os.listdir(extractor_folder):
+    for extractor_file_name in os.listdir(os.path.join(script_folder, 'extractor')):
         if not extractor_file_name.endswith('.py'):
             continue
 
-        if not os.path.isfile(os.path.join(extractor_folder, extractor_file_name)):
+        if not os.path.isfile(os.path.join(script_folder, 'extractor', extractor_file_name)):
             continue
 
-        module = importlib.import_module('.'.join([extractor_folder, extractor_file_name[:-3]]))
+        module = importlib.import_module('.'.join(['extractor', extractor_file_name[:-3]]))
         for name, class_object in inspect.getmembers(module):
             if name in extractors.keys():
                 continue
