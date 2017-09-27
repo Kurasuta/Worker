@@ -14,6 +14,7 @@ class Sample(object):
         self.debug_timestamp = None
         self.pdb_timestamp = None
         self.pdb_path = None
+        self.pdb_guid = None
         self.pdb_age = None
 
         self.export_name = None
@@ -70,6 +71,7 @@ class JsonFactory(object):
         if sample.debug_timestamp is not None: d['debug_timestamp'] = self._format_timestamp(sample.debug_timestamp)
         if sample.pdb_timestamp is not None: d['pdb_timestamp'] = self._format_timestamp(sample.pdb_timestamp)
         if sample.pdb_path is not None: d['pdb_path'] = sample.pdb_path
+        if sample.pdb_guid is not None: d['pdb_guid'] = sample.pdb_guid
         if sample.pdb_age is not None: d['pdb_age'] = sample.pdb_age
 
         if sample.export_name is not None: d['export_name'] = sample.export_name
