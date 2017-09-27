@@ -21,8 +21,28 @@ class Sample(object):
         self.resource_timestamp = None
         self.certificate_signing_timestamp = None
 
+        self.sections = []
+
     def __repr__(self):
         return '<Sample %s,%s,%s>' % (self.hash_sha256, self.hash_md5, self.hash_sha1)
+
+
+class SampleSection(object):
+    def __init(self):
+        self.hash_sha256 = None
+        self.virtual_address = None
+        self.virtual_size = None
+        self.raw_size = None
+        self.name = None
+
+    def __repr__(self):
+        return '<Section %s,%s,%s,%s,%s>' % (
+            self.hash_sha256,
+            self.virtual_address,
+            self.virtual_size,
+            self.raw_size,
+            self.name
+        )
 
 
 class JsonFactory(object):
@@ -58,5 +78,16 @@ class JsonFactory(object):
             d['resource_timestamp'] = self._format_timestamp(sample.resource_timestamp)
         if sample.certificate_signing_timestamp is not None:
             d['certificate_signing_timestamp'] = self._format_timestamp(sample.certificate_signing_timestamp)
+
+        if sample.sections:
+            d['sections'] = [
+                {
+                    'hash_sha256': section.hash_sha256,
+                    'name': section.name,
+                    'virtual_address': section.virtual_address,
+                    'virtual_size': section.virtual_size,
+                    'raw_size': section.raw_size
+                } for section in sample.sections
+            ]
 
         return d
