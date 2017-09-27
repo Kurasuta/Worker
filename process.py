@@ -18,7 +18,7 @@ extractor_folder = "extractor"
 
 
 def get_extractors():
-    extractors = []
+    extractors = {}
     for extractor_file_name in os.listdir(extractor_folder):
         if not extractor_file_name.endswith('.py'):
             continue
@@ -28,6 +28,8 @@ def get_extractors():
 
         module = importlib.import_module('.'.join([extractor_folder, extractor_file_name[:-3]]))
         for name, class_object in inspect.getmembers(module):
+            if name in extractors.keys():
+                continue
             if not inspect.isclass(class_object):
                 continue
             signature = inspect.signature(class_object.__init__)
@@ -38,12 +40,18 @@ def get_extractors():
                 if parameter == 'pe': kwargs['pe'] = pe
                 if parameter == 'data': kwargs['data'] = file_data
 
-            extractors.append(class_object(**kwargs))
+            if len(class_object.__bases__) != 1:
+                continue
+            base_class = class_object.__bases__[0]
+            if base_class.__name__ != 'BaseExtractor':
+                continue
+
+            extractors[name] = class_object(**kwargs)
     return extractors
 
 
 sample = Sample()
-for extractor in get_extractors():
+for extractor in get_extractors().values():
     extractor.extract(sample)
 
 pprint(JsonFactory().from_sample(sample))

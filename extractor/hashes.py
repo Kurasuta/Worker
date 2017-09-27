@@ -1,7 +1,8 @@
 import hashlib
+from .base import BaseExtractor
 
 
-class Hashes(object):
+class Hashes(BaseExtractor):
     def __init__(self, data):
         self.data = data
 
