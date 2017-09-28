@@ -4,6 +4,7 @@ import os
 import sys
 import inspect
 import importlib
+import raven
 from pprint import pprint
 
 from data import Sample, JsonFactory
@@ -15,6 +16,7 @@ parser = argparse.ArgumentParser(description='extracts metadata from PE file (pa
 parser.add_argument('file_name', metavar='FILENAME', help='file to process')
 args = parser.parse_args()
 
+raven = raven.Client(os.environ['RAVEN_CLIENT_STRING'])
 file_data = open(args.file_name, 'rb').read()
 pe = pefile.PE(data=file_data)
 
@@ -54,6 +56,9 @@ def get_extractors():
 
 sample = Sample()
 for extractor in get_extractors().values():
-    extractor.extract(sample)
+    try:
+        extractor.extract(sample)
+    except Exception:
+        raven.captureException()
 
 pprint(JsonFactory().from_sample(sample))
