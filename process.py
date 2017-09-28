@@ -16,6 +16,9 @@ parser = argparse.ArgumentParser(description='extracts metadata from PE file (pa
 parser.add_argument('file_name', metavar='FILENAME', help='file to process')
 args = parser.parse_args()
 
+if 'RAVEN_CLIENT_STRING' not in os.environ:
+    raise Exception('Environment variable RAVEN_CLIENT_STRING does not exist. It should contain a Sentry URL.')
+
 raven = raven.Client(os.environ['RAVEN_CLIENT_STRING'])
 file_data = open(args.file_name, 'rb').read()
 pe = pefile.PE(data=file_data)
