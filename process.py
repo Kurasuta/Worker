@@ -22,6 +22,7 @@ parser.add_argument('--debug', action='store_true', help='Show debugging informa
 parser.add_argument('file_name', metavar='FILENAME', help='file to process')
 args = parser.parse_args()
 
+logger.setLevel(logging.DEBUG if args.debug else logging.WARNING)
 
 if 'RAVEN_CLIENT_STRING' in os.environ:
     raven = raven.Client(os.environ['RAVEN_CLIENT_STRING'])
