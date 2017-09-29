@@ -15,6 +15,8 @@ class Pdb(BaseExtractor):
             raise Exception('Found %i debug directories' % len(self.pe.DIRECTORY_ENTRY_DEBUG))
 
         for debug_data in self.pe.DIRECTORY_ENTRY_DEBUG:
+            # TODO sample.pdb_age
+            # TODO sample.pdb_timestamp
             # TODO sample.pdb_guid
             # guid_data2 = struct.pack('<H', debug_data.entry.Signature_Data1).encode('hex')
             # guid_data2 = struct.pack('<H', debug_data.entry.Signature_Data2).encode('hex')
@@ -23,6 +25,5 @@ class Pdb(BaseExtractor):
             # print('{{{}-{}-{}-{}}}'.format(guid_data1, guid_data2, guid_data3, guid_data4))
 
             sample.debug_timestamp = datetime.utcfromtimestamp(debug_data.struct.TimeDateStamp)
-            sample.pdb_path = debug_data.entry.PdbFileName.decode('utf-8').strip('\0')
-            # TODO sample.pdb_age
-            # TODO sample.pdb_timestamp
+            if hasattr(debug_data.entry, 'PdbFileName'):
+                sample.pdb_path = debug_data.entry.PdbFileName.decode('utf-8').strip('\0')
