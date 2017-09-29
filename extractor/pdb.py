@@ -1,5 +1,3 @@
-import struct
-import hashlib
 from datetime import datetime
 from .base import BaseExtractor
 
