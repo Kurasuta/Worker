@@ -2,7 +2,7 @@ from datetime import datetime
 from .base import BaseExtractor
 
 
-class Sections(BaseExtractor):
+class Pdb(BaseExtractor):
     def __init__(self, data, pe):
         self.data = data
         self.pe = pe

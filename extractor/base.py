@@ -1,2 +1,3 @@
 class BaseExtractor(object):
-    pass
+    def extract(self, sample):
+        raise NotImplemented('called extract on BaseExtractor')
