@@ -49,13 +49,16 @@ class Sample(FrozenClass):
         return '<Sample %s,%s,%s>' % (self.hash_sha256, self.hash_md5, self.hash_sha1)
 
 
-class SampleSection(object):
+class SampleSection(FrozenClass):
     def __init(self):
         self.hash_sha256 = None
         self.virtual_address = None
         self.virtual_size = None
         self.raw_size = None
         self.name = None
+
+        self.data = None
+        self._freeze()
 
     def __repr__(self):
         return '<Section %s,%s,%s,%s,%s>' % (
