@@ -4,6 +4,8 @@ class Sample(object):
         self.hash_md5 = None
         self.hash_sha1 = None
 
+        self.ssdeep = None
+
         self.magic_id = None
         self.file_size = None
         self.entry_point = None

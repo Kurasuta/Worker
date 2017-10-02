@@ -14,3 +14,14 @@
 * [ ] debugging GUID
 * [ ] debug_timestamp vs pdb_timestamp
 * [ ] pdb_age
+* [ ] ssdeep
+* [ ] Nilsimsa
+* [ ] TLSH
+* [ ] Sdhash
+* [ ] file magic++ of all resources
+* [ ] entropy of whole file and of all sections and all resources
+* [ ] histogram over bytes of all .text sections
+* [ ] number of strings extracted by `strings` command, also number of strings of size at least 10
+* [ ] some heuristics reg. extracted strings
+* [ ] full PE header (https://stackoverflow.com/questions/8193862/the-size-of-a-pe-header) and min. first KB of file
+* [ ] import table and symbols
