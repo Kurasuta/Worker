@@ -73,6 +73,10 @@ class JsonFactory(object):
         return '%i' % data
 
     @staticmethod
+    def _format_hex(data):
+        return '0x%08x' % data
+
+    @staticmethod
     def _format_float(data):
         return '%f' % data
 
@@ -92,7 +96,7 @@ class JsonFactory(object):
         if sample.entropy is not None: d['entropy'] = self._format_float(sample.entropy)
 
         if sample.file_size is not None: d['file_size'] = self._format_int(sample.file_size)
-        if sample.entry_point is not None: d['entry_point'] = self._format_int(sample.entry_point)
+        if sample.entry_point is not None: d['entry_point'] = self._format_hex(sample.entry_point)
 
         if sample.overlay_sha256 is not None: d['overlay_sha256'] = sample.overlay_sha256
         if sample.overlay_size is not None: d['overlay_size'] = self._format_int(sample.overlay_size)
