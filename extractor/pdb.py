@@ -13,6 +13,8 @@ class Pdb(BaseExtractor):
 
         debug_timestamps = []
         pdb_paths = []
+        sample.debug_directory_count = len(self.pe.DIRECTORY_ENTRY_DEBUG)
+
         for debug_data in self.pe.DIRECTORY_ENTRY_DEBUG:
             # TODO sample.pdb_age
             # TODO sample.pdb_timestamp
@@ -28,6 +30,8 @@ class Pdb(BaseExtractor):
             if hasattr(debug_data.entry, 'PdbFileName'):
                 pdb_paths.append(debug_data.entry.PdbFileName.decode('utf-8').strip('\0'))
 
+        debug_timestamps = list(set(debug_timestamps))
+        pdb_paths = list(set(pdb_paths))
         if len(debug_timestamps) > 1 or len(pdb_paths) > 1:
             raise Exception('Found %i debug timestamps and %i pdb paths.' % (len(debug_timestamps), len(pdb_paths)))
 

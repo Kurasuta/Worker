@@ -13,6 +13,7 @@ class Sample(object):
         self.overlay_sha256 = None
         self.build_timestamp = None
 
+        self.debug_directory_count = None
         self.debug_timestamp = None
         self.pdb_timestamp = None
         self.pdb_path = None
@@ -72,6 +73,7 @@ class JsonFactory(object):
         if sample.overlay_sha256 is not None: d['overlay_sha256'] = sample.overlay_sha256
         if sample.build_timestamp is not None: d['build_timestamp'] = self._format_timestamp(sample.build_timestamp)
 
+        if sample.debug_directory_count is not None: d['debug_directory_count'] = sample.debug_directory_count
         if sample.debug_timestamp is not None: d['debug_timestamp'] = self._format_timestamp(sample.debug_timestamp)
         if sample.pdb_timestamp is not None: d['pdb_timestamp'] = self._format_timestamp(sample.pdb_timestamp)
         if sample.pdb_path is not None: d['pdb_path'] = sample.pdb_path
