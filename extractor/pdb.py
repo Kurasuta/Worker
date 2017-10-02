@@ -35,5 +35,5 @@ class Pdb(BaseExtractor):
         if len(debug_timestamps) > 1 or len(pdb_paths) > 1:
             raise Exception('Found %i debug timestamps and %i pdb paths.' % (len(debug_timestamps), len(pdb_paths)))
 
-        sample.debug_timestamp = datetime.utcfromtimestamp(debug_timestamps[0])
-        sample.pdb_path = pdb_paths[0]
+        if debug_timestamps: sample.debug_timestamp = datetime.utcfromtimestamp(debug_timestamps[0])
+        if pdb_paths: sample.pdb_path = pdb_paths[0]
