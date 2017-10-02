@@ -64,6 +64,8 @@ class JsonFactory(object):
         if sample.hash_md5 is not None: d['hash_md5'] = sample.hash_md5
         if sample.hash_sha1 is not None: d['hash_sha1'] = sample.hash_sha1
 
+        if sample.ssdeep is not None: d['ssdeep'] = sample.ssdeep
+
         if sample.file_size is not None: d['file_size'] = self._format_int(sample.file_size)
         if sample.entry_point is not None: d['entry_point'] = self._format_int(sample.entry_point)
         if sample.overlay_size is not None: d['overlay_size'] = self._format_int(sample.overlay_size)
