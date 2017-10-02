@@ -11,9 +11,8 @@ class Pdb(BaseExtractor):
         if not hasattr(self.pe, 'DIRECTORY_ENTRY_DEBUG'):
             return
 
-        if len(self.pe.DIRECTORY_ENTRY_DEBUG) > 1:
-            raise Exception('Found %i debug directories' % len(self.pe.DIRECTORY_ENTRY_DEBUG))
-
+        debug_timestamps = []
+        pdb_paths = []
         for debug_data in self.pe.DIRECTORY_ENTRY_DEBUG:
             # TODO sample.pdb_age
             # TODO sample.pdb_timestamp
@@ -24,6 +23,13 @@ class Pdb(BaseExtractor):
             # guid_data4 = struct.pack('<Q', debug_data.entry.Signature_Data4).encode('hex')
             # print('{{{}-{}-{}-{}}}'.format(guid_data1, guid_data2, guid_data3, guid_data4))
 
-            sample.debug_timestamp = datetime.utcfromtimestamp(debug_data.struct.TimeDateStamp)
+            if debug_data.struct.TimeDateStamp:
+                debug_timestamps.append(debug_data.struct.TimeDateStamp)
             if hasattr(debug_data.entry, 'PdbFileName'):
-                sample.pdb_path = debug_data.entry.PdbFileName.decode('utf-8').strip('\0')
+                pdb_paths.append(debug_data.entry.PdbFileName.decode('utf-8').strip('\0'))
+
+        if len(debug_timestamps) > 1 or len(pdb_paths) > 1:
+            raise Exception('Found %i debug timestamps and %i pdb paths.' % (len(debug_timestamps), len(pdb_paths)))
+
+        sample.debug_timestamp = datetime.utcfromtimestamp(debug_timestamps[0])
+        sample.pdb_path = pdb_paths[0]
