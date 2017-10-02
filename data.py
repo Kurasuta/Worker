@@ -1,16 +1,32 @@
-class Sample(object):
+class FrozenClass(object):
+    __isfrozen = False
+
+    def __setattr__(self, key, value):
+        if self.__isfrozen and not hasattr(self, key):
+            raise TypeError('%r is a frozen class, cannot set %s to "%s"' % (self, key, value))
+        object.__setattr__(self, key, value)
+
+    def _freeze(self):
+        self.__isfrozen = True
+
+
+class Sample(FrozenClass):
     def __init__(self):
         self.hash_sha256 = None
         self.hash_md5 = None
         self.hash_sha1 = None
+        self.size = None
 
         self.ssdeep = None
+        self.entropy = None
 
         self.magic_id = None
         self.file_size = None
         self.entry_point = None
-        self.overlay_size = None
         self.overlay_sha256 = None
+        self.overlay_size = None
+        self.overlay_ssdeep = None
+        self.overlay_entropy = None
         self.build_timestamp = None
 
         self.debug_directory_count = None
@@ -26,6 +42,8 @@ class Sample(object):
         self.certificate_signing_timestamp = None
 
         self.sections = []
+
+        self._freeze()
 
     def __repr__(self):
         return '<Sample %s,%s,%s>' % (self.hash_sha256, self.hash_md5, self.hash_sha1)
@@ -55,6 +73,10 @@ class JsonFactory(object):
         return '%i' % data
 
     @staticmethod
+    def _format_float(data):
+        return '%f' % data
+
+    @staticmethod
     def _format_timestamp(data):
         return '%s' % data  # TODO
 
@@ -64,13 +86,19 @@ class JsonFactory(object):
         if sample.hash_sha256 is not None: d['hash_sha256'] = sample.hash_sha256
         if sample.hash_md5 is not None: d['hash_md5'] = sample.hash_md5
         if sample.hash_sha1 is not None: d['hash_sha1'] = sample.hash_sha1
+        if sample.size is not None: d['size'] = self._format_int(sample.size)
 
         if sample.ssdeep is not None: d['ssdeep'] = sample.ssdeep
+        if sample.entropy is not None: d['entropy'] = self._format_float(sample.entropy)
 
         if sample.file_size is not None: d['file_size'] = self._format_int(sample.file_size)
         if sample.entry_point is not None: d['entry_point'] = self._format_int(sample.entry_point)
-        if sample.overlay_size is not None: d['overlay_size'] = self._format_int(sample.overlay_size)
+
         if sample.overlay_sha256 is not None: d['overlay_sha256'] = sample.overlay_sha256
+        if sample.overlay_size is not None: d['overlay_size'] = self._format_int(sample.overlay_size)
+        if sample.overlay_ssdeep is not None: d['overlay_ssdeep'] = sample.overlay_ssdeep
+        if sample.overlay_entropy is not None: d['overlay_entropy'] = self._format_float(sample.overlay_entropy)
+
         if sample.build_timestamp is not None: d['build_timestamp'] = self._format_timestamp(sample.build_timestamp)
 
         if sample.debug_directory_count is not None: d['debug_directory_count'] = sample.debug_directory_count
