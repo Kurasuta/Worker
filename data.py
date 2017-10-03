@@ -50,7 +50,7 @@ class Sample(FrozenClass):
 
 
 class SampleSection(FrozenClass):
-    def __init(self):
+    def __init__(self):
         self.hash_sha256 = None
         self.virtual_address = None
         self.virtual_size = None
