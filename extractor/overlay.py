@@ -12,10 +12,8 @@ class Overlay(BaseExtractor):
     def extract(self, sample):
         if len(self.pe.sections) == 0:
             return
-        first_section = self.pe.sections[-1]
-        pe_size = first_section.PointerToRawData + first_section.SizeOfRawData
 
-        overlay = self.data[pe_size:]
+        overlay = self.data[self.pe.get_overlay_data_start_offset()::]
         sample.overlay_sha256 = hashlib.sha256(overlay).hexdigest()
         sample.overlay_size = len(overlay)
         sample.overlay_ssdeep = ssdeep.hash(overlay)
