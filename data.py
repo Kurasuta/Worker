@@ -42,6 +42,7 @@ class Sample(FrozenClass):
         self.certificate_signing_timestamp = None
 
         self.sections = []
+        self.resources = []
 
         self._freeze()
 
@@ -72,6 +73,32 @@ class SampleSection(FrozenClass):
         )
 
 
+class SampleResource(FrozenClass):
+    def __init__(self):
+        self.hash_sha256 = None
+        self.offset = None
+        self.size = None
+
+        self.type_id = None
+        self.type_str = None
+        self.name_id = None
+        self.name_str = None
+        self.language_id = None
+        self.language_str = None
+
+        self._freeze()
+
+    def __repr__(self):
+        return '<Resource %s offset=%s,size=%s,type=%s:%s,name=%s:%s,language=%s:%s>' % (
+            self.hash_sha256,
+            self.offset,
+            self.size,
+            self.type_id, self.type_str,
+            self.name_id, self.name_str,
+            self.language_id, self.language_str
+        )
+
+
 class JsonFactory(object):
     @staticmethod
     def _format_int(data):
@@ -88,6 +115,10 @@ class JsonFactory(object):
     @staticmethod
     def _format_timestamp(data):
         return '%s' % data  # TODO
+
+    @staticmethod
+    def _format_pefile_unicode_wrapper(data):
+        return '%s' % data
 
     def from_sample(self, sample):
         # TODO magic_id
@@ -136,5 +167,25 @@ class JsonFactory(object):
                     'ssdeep': section.ssdeep,
                 } for section in sample.sections
             ]
+
+        if sample.resources:
+            d['resources'] = []
+            for sample_resource in sample.resources:
+                json_resource = {
+                    'hash_sha256': sample_resource.hash_sha256,
+                    'offset': sample_resource.offset,
+                    'size': sample_resource.size,
+                }
+                if sample_resource.type_id: json_resource['type_id'] = sample_resource.type_id
+                if sample_resource.type_str: json_resource['type_str'] = \
+                    '%s' % self._format_pefile_unicode_wrapper(sample_resource.type_str)
+                if sample_resource.name_id: json_resource['name_id'] = sample_resource.name_id
+                if sample_resource.name_str: json_resource['name_str'] = \
+                    '%s' % self._format_pefile_unicode_wrapper(sample_resource.name_str)
+                if sample_resource.language_id: json_resource['language_id'] = sample_resource.language_id
+                if sample_resource.language_str: json_resource['language_str'] = \
+                    '%s' % self._format_pefile_unicode_wrapper(sample_resource.language_str)
+
+                d['resources'].append(json_resource)
 
         return d
