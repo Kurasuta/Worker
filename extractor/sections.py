@@ -1,4 +1,6 @@
 import hashlib
+from lib import entropy
+import ssdeep
 from data import SampleSection
 from .base import BaseExtractor
 
@@ -13,9 +15,13 @@ class Sections(BaseExtractor):
             return
         for pe_section in self.pe.sections:
             section = SampleSection()
-            section.hash_sha256 = hashlib.sha256(pe_section.get_data()).hexdigest()
+            data = pe_section.get_data()
+
+            section.hash_sha256 = hashlib.sha256(data).hexdigest()
             section.name = pe_section.Name.decode('utf-8').replace('\0', '')
             section.virtual_address = pe_section.VirtualAddress
             section.virtual_size = pe_section.Misc_VirtualSize
             section.raw_size = pe_section.SizeOfRawData
+            section.entropy = entropy(data)
+            section.ssdeep = ssdeep.hash(data)
             sample.sections.append(section)

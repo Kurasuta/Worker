@@ -1,12 +1,12 @@
-import entropy
+from lib import entropy
 from .base import BaseExtractor
 
 
-class Entropy(BaseExtractor):
+class File(BaseExtractor):
     def __init__(self, data):
         self.data = data
 
     def extract(self, sample):
-        sample.entropy = entropy.shannon_entropy(self.data)
+        sample.size = len(self.data)
+        sample.entropy = entropy(self.data)
         # TODO calculate entropy for every section
-        # TODO calculate entropy for every resource

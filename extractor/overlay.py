@@ -1,4 +1,4 @@
-import entropy
+from lib import entropy
 import ssdeep
 import hashlib
 from .base import BaseExtractor
@@ -19,4 +19,4 @@ class Overlay(BaseExtractor):
         sample.overlay_sha256 = hashlib.sha256(overlay).hexdigest()
         sample.overlay_size = len(overlay)
         sample.overlay_ssdeep = ssdeep.hash(overlay)
-        sample.overlay_entropy = entropy.shannon_entropy(overlay)
+        sample.overlay_entropy = entropy(overlay)

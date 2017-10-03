@@ -57,7 +57,9 @@ class SampleSection(FrozenClass):
         self.raw_size = None
         self.name = None
 
-        self.data = None
+        self.entropy = None
+        self.ssdeep = None
+
         self._freeze()
 
     def __repr__(self):
@@ -129,7 +131,9 @@ class JsonFactory(object):
                     'name': section.name,
                     'virtual_address': section.virtual_address,
                     'virtual_size': section.virtual_size,
-                    'raw_size': section.raw_size
+                    'raw_size': section.raw_size,
+                    'entropy': section.entropy,
+                    'ssdeep': section.ssdeep,
                 } for section in sample.sections
             ]
 
