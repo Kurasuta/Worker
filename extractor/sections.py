@@ -18,7 +18,8 @@ class Sections(BaseExtractor):
             data = pe_section.get_data()
 
             section.hash_sha256 = hashlib.sha256(data).hexdigest()
-            section.name = pe_section.Name.decode('utf-8').replace('\0', '')
+            # simulate NULL termination and try to avoid exceptions due to malformations
+            section.name = pe_section.Name.decode('utf-8', 'ignore').split('\x00', 1)[0]
             section.virtual_address = pe_section.VirtualAddress
             section.virtual_size = pe_section.Misc_VirtualSize
             section.raw_size = pe_section.SizeOfRawData
