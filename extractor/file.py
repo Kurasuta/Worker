@@ -11,3 +11,4 @@ class File(BaseExtractor):
         sample.size = len(self.data)
         sample.entropy = entropy(self.data)
         sample.entry_point = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
+        sample.first_kb = [c for c in self.data[:1024]]
