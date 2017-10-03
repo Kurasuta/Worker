@@ -1,4 +1,6 @@
 import hashlib
+from lib import entropy
+import ssdeep
 from data import SampleResource
 from .base import BaseExtractor
 
@@ -23,6 +25,9 @@ class Resources(BaseExtractor):
             resource.hash_sha256 = hashlib.sha256(data).hexdigest()
             resource.offset = offset
             resource.size = size
+
+            resource.ssdeep = ssdeep.hash(data)
+            resource.entropy = entropy(data)
 
             resource.type_id, resource.type_str = type_pair
             resource.name_id, resource.name_str = name_pair
@@ -49,7 +54,6 @@ class Resources(BaseExtractor):
             )
         else:
             raise Exception('Found resource tree structure with depth > 3')
-
 
         if pe_resource.struct.DataIsDirectory:
             for child_pe_resource in pe_resource.directory.entries:
