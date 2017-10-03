@@ -3,10 +3,12 @@ from .base import BaseExtractor
 
 
 class File(BaseExtractor):
-    def __init__(self, data):
+    def __init__(self, data, pe):
         self.data = data
+        self.pe = pe
 
     def extract(self, sample):
         sample.size = len(self.data)
         sample.entropy = entropy(self.data)
-        # TODO calculate entropy for every section
+        sample.entry_point = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
+
