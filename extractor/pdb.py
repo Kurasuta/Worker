@@ -1,5 +1,6 @@
 from datetime import datetime
 from .base import BaseExtractor
+from lib import null_terminate_and_decode_utf8
 
 
 class Pdb(BaseExtractor):
@@ -28,7 +29,7 @@ class Pdb(BaseExtractor):
             if debug_data.struct.TimeDateStamp:
                 debug_timestamps.append(debug_data.struct.TimeDateStamp)
             if hasattr(debug_data.entry, 'PdbFileName'):
-                pdb_paths.append(debug_data.entry.PdbFileName.decode('utf-8').strip('\0'))
+                pdb_paths.append(null_terminate_and_decode_utf8(debug_data.entry.PdbFileName))
 
         debug_timestamps = list(set(debug_timestamps))
         pdb_paths = list(set(pdb_paths))
