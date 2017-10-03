@@ -13,12 +13,17 @@ class Sections(BaseExtractor):
     def extract(self, sample):
         if not hasattr(self.pe, 'sections'):
             return
+
+        sample.code_histogram = dict([(i, 0) for i in range(256)])
         for pe_section in self.pe.sections:
             section = SampleSection()
             data = pe_section.get_data()
 
             section.hash_sha256 = hashlib.sha256(data).hexdigest()
             section.name = null_terminate_and_decode_utf8(pe_section.Name)
+            if 'text' in section.name or 'CODE' in section.name:
+                for i in list(data):
+                    sample.code_histogram[i] += 1
             section.virtual_address = pe_section.VirtualAddress
             section.virtual_size = pe_section.Misc_VirtualSize
             section.raw_size = pe_section.SizeOfRawData

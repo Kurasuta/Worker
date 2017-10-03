@@ -43,6 +43,7 @@ class Sample(FrozenClass):
 
         self.sections = []
         self.resources = []
+        self.code_histogram = None
 
         self._freeze()
 
@@ -78,6 +79,8 @@ class SampleResource(FrozenClass):
         self.hash_sha256 = None
         self.offset = None
         self.size = None
+        self.ssdeep = None
+        self.entropy = None
 
         self.type_id = None
         self.type_str = None
@@ -127,6 +130,7 @@ class JsonFactory(object):
         if sample.hash_md5 is not None: d['hash_md5'] = sample.hash_md5
         if sample.hash_sha1 is not None: d['hash_sha1'] = sample.hash_sha1
         if sample.size is not None: d['size'] = self._format_int(sample.size)
+        if sample.code_histogram is not None: d['code_histogram'] = sample.code_histogram
 
         if sample.ssdeep is not None: d['ssdeep'] = sample.ssdeep
         if sample.entropy is not None: d['entropy'] = self._format_float(sample.entropy)
@@ -175,6 +179,8 @@ class JsonFactory(object):
                     'hash_sha256': sample_resource.hash_sha256,
                     'offset': sample_resource.offset,
                     'size': sample_resource.size,
+                    'ssdeep': sample_resource.ssdeep,
+                    'entropy': sample_resource.entropy,
                 }
                 if sample_resource.type_id: json_resource['type_id'] = sample_resource.type_id
                 if sample_resource.type_str: json_resource['type_str'] = \
