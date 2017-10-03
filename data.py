@@ -3,7 +3,7 @@ class FrozenClass(object):
 
     def __setattr__(self, key, value):
         if self.__isfrozen and not hasattr(self, key):
-            raise TypeError('%r is a frozen class, cannot set %s to "%s"' % (self, key, value))
+            raise TypeError('%r is a frozen class, cannot set "%s" to "%s"' % (self, key, value))
         object.__setattr__(self, key, value)
 
     def _freeze(self):
