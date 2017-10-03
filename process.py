@@ -56,6 +56,7 @@ def get_extractors():
                 if parameter == 'self': continue
                 if parameter == 'pe': kwargs['pe'] = pe
                 if parameter == 'data': kwargs['data'] = file_data
+                if parameter == 'logger': kwargs['logger'] = logger
 
             if len(class_object.__bases__) != 1:
                 continue
