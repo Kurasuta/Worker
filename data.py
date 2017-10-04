@@ -36,6 +36,7 @@ class Sample(FrozenClass):
         self.pdb_path = None
         self.pdb_guid = None
         self.pdb_age = None
+        self.pdb_signature = None
 
         self.export_name = None
         self.export_table_timestamp = None
@@ -153,6 +154,7 @@ class JsonFactory(object):
         if sample.pdb_path is not None: d['pdb_path'] = sample.pdb_path
         if sample.pdb_guid is not None: d['pdb_guid'] = sample.pdb_guid
         if sample.pdb_age is not None: d['pdb_age'] = sample.pdb_age
+        if sample.pdb_signature is not None: d['pdb_signature'] = sample.pdb_signature
 
         if sample.export_name is not None: d['export_name'] = sample.export_name
         if sample.export_table_timestamp is not None: d['export_table_timestamp'] = sample.export_table_timestamp
