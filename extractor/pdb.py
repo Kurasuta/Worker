@@ -20,12 +20,16 @@ class Pdb(BaseExtractor):
         sample.debug_directory_count = len(self.pe.DIRECTORY_ENTRY_DEBUG)
 
         for debug_data in self.pe.DIRECTORY_ENTRY_DEBUG:
-            pdb_signatures.append(debug_data.entry.CvSignature)
-            pdb_guids.append('-'.join([
+            if not hasattr(debug_data, 'entry'):
+                continue
+            if hasattr(debug_data.entry, 'CvSignature'):
+                pdb_signatures.append(debug_data.entry.CvSignature)
+            guid = '-'.join([
                 '%x' % getattr(debug_data.entry, e)
                 for e in dir(debug_data.entry)
                 if e.startswith('Signature_Data')
-            ]))
+            ])
+            if guid: pdb_guids.append(guid)
 
             if hasattr(debug_data.entry, 'Age'):
                 pdb_ages.append(debug_data.entry.Age)
