@@ -13,7 +13,6 @@ from data import Sample, JsonFactory
 logging.basicConfig(format='%(asctime)s %(message)s')
 logger = logging.getLogger('KurasutaWorker')
 
-
 script_folder = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(script_folder)
 
@@ -32,6 +31,7 @@ else:
 
 file_data = open(args.file_name, 'rb').read()
 pe = pefile.PE(data=file_data)
+regex_factory = RegexFactory()
 
 
 def get_extractors():
@@ -57,6 +57,7 @@ def get_extractors():
                 if parameter == 'pe': kwargs['pe'] = pe
                 if parameter == 'data': kwargs['data'] = file_data
                 if parameter == 'logger': kwargs['logger'] = logger
+                if parameter == 'regex_factory': kwargs['regex_factory'] = regex_factory
 
             if len(class_object.__bases__) != 1:
                 continue

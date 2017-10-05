@@ -3,7 +3,7 @@ from .base import BaseExtractor
 
 
 class File(BaseExtractor):
-    def __init__(self, data, pe):
+    def __init__(self, data, pe, regex_factory):
         self.data = data
         self.pe = pe
 

@@ -43,6 +43,10 @@ class Sample(FrozenClass):
         self.resource_timestamp = None
         self.certificate_signing_timestamp = None
 
+        self.strings_count_of_length_at_least_10 = None
+        self.strings_count = None
+        self.heuristic_iocs = None
+
         self.sections = []
         self.resources = []
         self.code_histogram = None
@@ -156,6 +160,11 @@ class JsonFactory(object):
         if sample.pdb_age is not None: d['pdb_age'] = sample.pdb_age
         if sample.pdb_signature is not None: d['pdb_signature'] = sample.pdb_signature
 
+        if sample.strings_count_of_length_at_least_10 is not None:
+            d['strings_count_of_length_at_least_10'] = sample.strings_count_of_length_at_least_10
+        if sample.strings_count is not None: d['strings_count'] = sample.strings_count
+        if sample.heuristic_iocs is not None: d['heuristic_iocs'] = sample.heuristic_iocs
+
         if sample.export_name is not None: d['export_name'] = sample.export_name
         if sample.export_table_timestamp is not None: d['export_table_timestamp'] = sample.export_table_timestamp
         if sample.resource_timestamp is not None:
@@ -198,4 +207,4 @@ class JsonFactory(object):
 
                 d['resources'].append(json_resource)
 
-        return d
+        return '' #d['sections'] # TODO
