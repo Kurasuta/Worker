@@ -207,4 +207,4 @@ class JsonFactory(object):
 
                 d['resources'].append(json_resource)
 
-        return '' #d['sections'] # TODO
+        return d
