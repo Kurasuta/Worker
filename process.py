@@ -9,6 +9,7 @@ import raven
 from pprint import pprint
 
 from data import Sample, JsonFactory
+from lib import RegexFactory
 
 logging.basicConfig(format='%(asctime)s %(message)s')
 logger = logging.getLogger('KurasutaWorker')
