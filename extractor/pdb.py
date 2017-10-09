@@ -4,8 +4,7 @@ from lib import null_terminate_and_decode_utf8
 
 
 class Pdb(BaseExtractor):
-    def __init__(self, data, pe):
-        self.data = data
+    def __init__(self, pe):
         self.pe = pe
 
     def extract(self, sample):

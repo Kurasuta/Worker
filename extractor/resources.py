@@ -17,14 +17,13 @@ class Resources(BaseExtractor):
 
         def extract_resource(type_pair, name_pair, language_pair, offset, size):
             data = self.pe.get_data(offset, size)
-            if len(data) != size:
-                raise Exception('Data of size %s extracted eventhough size had value %s' % (len(data), size))
 
             resource = SampleResource()
 
             resource.hash_sha256 = hashlib.sha256(data).hexdigest()
             resource.offset = offset
             resource.size = size
+            resource.actual_size = len(data)
 
             resource.ssdeep = ssdeep.hash(data)
             resource.entropy = entropy(data)

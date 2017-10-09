@@ -39,7 +39,9 @@ class Sample(FrozenClass):
         self.pdb_signature = None
 
         self.export_name = None
+        self.exports = None
         self.export_table_timestamp = None
+        self.imports = None
         self.resource_timestamp = None
         self.certificate_signing_timestamp = None
 
@@ -85,6 +87,7 @@ class SampleResource(FrozenClass):
         self.hash_sha256 = None
         self.offset = None
         self.size = None
+        self.actual_size = None
         self.ssdeep = None
         self.entropy = None
 
@@ -98,14 +101,31 @@ class SampleResource(FrozenClass):
         self._freeze()
 
     def __repr__(self):
-        return '<Resource %s offset=%s,size=%s,type=%s:%s,name=%s:%s,language=%s:%s>' % (
+        return '<Resource %s offset=%s,size=%s,actual_size=%s,type=%s:%s,name=%s:%s,language=%s:%s>' % (
             self.hash_sha256,
             self.offset,
             self.size,
+            self.actual_size,
             self.type_id, self.type_str,
             self.name_id, self.name_str,
             self.language_id, self.language_str
         )
+
+
+class SampleExport(FrozenClass):
+    def __init__(self):
+        self.address = None
+        self.name = None
+        self.ordinal = None
+        self._freeze()
+
+
+class SampleImport(FrozenClass):
+    def __init__(self):
+        self.dll_name = None
+        self.address = None
+        self.name = None
+        self._freeze()
 
 
 class JsonFactory(object):
@@ -169,6 +189,17 @@ class JsonFactory(object):
         if sample.heuristic_iocs is not None: d['heuristic_iocs'] = sample.heuristic_iocs
 
         if sample.export_name is not None: d['export_name'] = sample.export_name
+        if sample.exports:
+            d['exports'] = [
+                {'address': export.address, 'name': export.name, 'ordinal': export.ordinal}
+                for export in sample.exports
+            ]
+        if sample.imports:
+            d['imports'] = [
+                {'dll_name': export.dll_name, 'address': export.address, 'name': export.name}
+                for export in sample.imports
+            ]
+
         if sample.export_table_timestamp is not None: d['export_table_timestamp'] = sample.export_table_timestamp
         if sample.resource_timestamp is not None:
             d['resource_timestamp'] = self._format_timestamp(sample.resource_timestamp)
@@ -195,6 +226,7 @@ class JsonFactory(object):
                     'hash_sha256': sample_resource.hash_sha256,
                     'offset': sample_resource.offset,
                     'size': sample_resource.size,
+                    'actual_size': sample_resource.actual_size,
                     'ssdeep': sample_resource.ssdeep,
                     'entropy': sample_resource.entropy,
                 }
