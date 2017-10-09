@@ -19,6 +19,7 @@ sys.path.append(script_folder)
 
 parser = argparse.ArgumentParser(description='extracts metadata from PE file (part of the Kurasuta project)')
 parser.add_argument('--debug', action='store_true', help='Show debugging information')
+parser.add_argument('--pretty', action='store_true', help='Uses pretty print')
 parser.add_argument('--filter',  help='Specify pattern that output fields must match')
 parser.add_argument('file_name', metavar='FILENAME', help='file to process')
 args = parser.parse_args()
@@ -82,4 +83,8 @@ for extractor in extractors:
         if raven:
             raven.captureException()
 
-pprint(JsonFactory(args.filter).from_sample(sample))
+out = JsonFactory(args.filter).from_sample(sample)
+if args.pretty:
+    pprint(out)
+else:
+    print(out)
