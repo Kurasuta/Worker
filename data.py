@@ -109,6 +109,9 @@ class SampleResource(FrozenClass):
 
 
 class JsonFactory(object):
+    def __init__(self, filter=None):
+        self.filter = filter
+
     @staticmethod
     def _format_int(data):
         return '%i' % data
@@ -207,4 +210,6 @@ class JsonFactory(object):
 
                 d['resources'].append(json_resource)
 
+        if self.filter:
+            d = {k: v for k, v in d.items() if self.filter in k}
         return d

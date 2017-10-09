@@ -2,6 +2,7 @@ from lib import entropy
 from .base import BaseExtractor
 from datetime import datetime
 import hashlib
+import ssdeep
 
 
 class File(BaseExtractor):
