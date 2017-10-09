@@ -16,7 +16,7 @@ class Sections(BaseExtractor):
 
         entry_point = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
 
-        sample.code_histogram = dict([(i, 0) for i in range(256)])
+        sample.code_histogram = {i: 0 for i in range(256)}
         for pe_section in self.pe.sections:
             section = SampleSection()
             data = pe_section.get_data()
