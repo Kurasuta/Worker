@@ -3,6 +3,7 @@ import importlib
 import inspect
 import logging
 import os
+import json
 import sys
 from pprint import pprint
 
@@ -101,4 +102,4 @@ out = JsonFactory(args.filter).from_sample(sample)
 if args.pretty:
     pprint(out)
 else:
-    print(out)
+    print(json.dumps(out))
