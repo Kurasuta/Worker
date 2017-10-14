@@ -1,0 +1,6 @@
+[submodule "lib"]
+	path = lib
+	url = git@github.com:Kurasuta/Lib.git
+[submodule "peyd"]
+	path = peyd
+	url = git@github.com:larsborn/peyd.git

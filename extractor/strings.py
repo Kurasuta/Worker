@@ -1,5 +1,5 @@
 from .base import BaseExtractor
-from lib import strings
+from lib.regex import strings
 from base64 import b64decode
 import zlib
 

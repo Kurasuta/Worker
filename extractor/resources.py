@@ -1,7 +1,9 @@
 import hashlib
-from lib import entropy
+
 import ssdeep
-from data import SampleResource
+
+from lib.regex import entropy
+from lib.data import SampleResource
 from .base import BaseExtractor
 
 

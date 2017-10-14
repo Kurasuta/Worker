@@ -1,4 +1,4 @@
-from lib import entropy
+from lib.regex import entropy
 import ssdeep
 import hashlib
 from .base import BaseExtractor

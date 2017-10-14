@@ -1,15 +1,18 @@
 import argparse
-import pefile
+import importlib
+import inspect
+import logging
 import os
 import sys
-import inspect
-import importlib
-import logging
-import raven
 from pprint import pprint
 
-from data import Sample, JsonFactory
+import pefile
+import raven
+
+from graphite import Graphite
 from lib import RegexFactory
+from lib.data import Sample, JsonFactory
+from peyd.peyd import PEiDDataBase
 
 logging.basicConfig(format='%(asctime)s %(message)s')
 logger = logging.getLogger('KurasutaWorker')
@@ -20,7 +23,7 @@ sys.path.append(script_folder)
 parser = argparse.ArgumentParser(description='extracts metadata from PE file (part of the Kurasuta project)')
 parser.add_argument('--debug', action='store_true', help='Show debugging information')
 parser.add_argument('--pretty', action='store_true', help='Uses pretty print')
-parser.add_argument('--filter',  help='Specify pattern that output fields must match')
+parser.add_argument('--filter', help='Specify pattern that output fields must match')
 parser.add_argument('file_name', metavar='FILENAME', help='file to process')
 args = parser.parse_args()
 
@@ -32,8 +35,17 @@ else:
     raven = None
     logger.warning('Environment variable RAVEN_CLIENT_STRING does not exist. No logging to Sentry is performed.')
 
+if 'GRAPHITE_SERVER' in os.environ:
+    graphite = Graphite(os.environ['GRAPHITE_SERVER'])
+else:
+    graphite = None
+    logger.warning('Environment variable GRAPHITE_SERVER does not exist. No logging to Graphite is performed.')
+
 file_data = open(args.file_name, 'rb').read()
 pe = pefile.PE(data=file_data)
+peyd = PEiDDataBase()
+peyd.readfile(os.path.join(os.path.dirname(__file__), 'peyd', 'peyd.txt'))
+
 regex_factory = RegexFactory()
 
 
@@ -61,6 +73,7 @@ def get_extractors():
                 if parameter == 'data': kwargs['data'] = file_data
                 if parameter == 'logger': kwargs['logger'] = logger
                 if parameter == 'regex_factory': kwargs['regex_factory'] = regex_factory
+                if parameter == 'peyd': kwargs['peyd'] = peyd
 
             if len(class_object.__bases__) != 1:
                 continue

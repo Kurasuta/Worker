@@ -1,6 +1,6 @@
 from datetime import datetime
 from .base import BaseExtractor
-from lib import null_terminate_and_decode_utf8
+from lib.regex import null_terminate_and_decode_utf8
 
 
 class Pdb(BaseExtractor):

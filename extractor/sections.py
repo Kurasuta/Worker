@@ -1,7 +1,9 @@
 import hashlib
-from lib import entropy, null_terminate_and_decode_utf8
+
 import ssdeep
-from data import SampleSection
+
+from lib.regex import entropy, null_terminate_and_decode_utf8
+from lib.data import SampleSection
 from .base import BaseExtractor
 
 

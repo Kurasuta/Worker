@@ -1,5 +1,5 @@
+from lib.data import SampleExport, SampleImport
 from .base import BaseExtractor
-from data import SampleExport, SampleImport
 
 
 class Ports(BaseExtractor):
