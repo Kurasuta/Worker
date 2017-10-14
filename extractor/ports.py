@@ -26,7 +26,7 @@ class Ports(BaseExtractor):
                 for entry in self.pe.DIRECTORY_ENTRY_IMPORT:
                     for pe_imp in entry.imports:
                         imp = SampleImport()
-                        imp.dll_name = entry.dll
+                        imp.dll_name = entry.dll.decode('utf-8')
                         imp.address = pe_imp.address
-                        imp.name = pe_imp.name
+                        imp.name = pe_imp.name.decode('utf-8')
                         sample.imports.append(imp)
