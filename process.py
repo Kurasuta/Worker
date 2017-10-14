@@ -7,10 +7,9 @@ import sys
 from pprint import pprint
 
 import pefile
-import raven
 
 from graphite import Graphite
-from lib import RegexFactory
+from lib.regex import RegexFactory
 from lib.data import Sample, JsonFactory
 from peyd.peyd import PEiDDataBase
 
@@ -30,9 +29,11 @@ args = parser.parse_args()
 logger.setLevel(logging.DEBUG if args.debug else logging.WARNING)
 
 if 'RAVEN_CLIENT_STRING' in os.environ:
-    raven = raven.Client(os.environ['RAVEN_CLIENT_STRING'])
+    import raven
+
+    sentry = raven.Client(os.environ['RAVEN_CLIENT_STRING'])
 else:
-    raven = None
+    sentry = None
     logger.warning('Environment variable RAVEN_CLIENT_STRING does not exist. No logging to Sentry is performed.')
 
 if 'GRAPHITE_SERVER' in os.environ:
@@ -93,8 +94,8 @@ for extractor in extractors:
         extractor.extract(sample)
     except Exception as e:
         logger.error('%s' % e)
-        if raven:
-            raven.captureException()
+        if sentry:
+            sentry.captureException()
 
 out = JsonFactory(args.filter).from_sample(sample)
 if args.pretty:
