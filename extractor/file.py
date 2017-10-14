@@ -3,6 +3,7 @@ from .base import BaseExtractor
 from datetime import datetime
 import hashlib
 import ssdeep
+from magic import magic
 
 
 class File(BaseExtractor):
@@ -16,6 +17,7 @@ class File(BaseExtractor):
         sample.hash_sha1 = hashlib.sha1(self.data).hexdigest()
         sample.hash_sha256 = hashlib.sha256(self.data).hexdigest()
         sample.ssdeep = ssdeep.hash(self.data)
+        sample.magic = magic.from_buffer(self.data[:1024])
 
         sample.size = len(self.data)
         sample.entropy = entropy(self.data)

@@ -4,3 +4,6 @@
 [submodule "peyd"]
 	path = peyd
 	url = https://github.com/larsborn/peyd.git
+[submodule "magic"]
+	path = magic
+	url = https://github.com/ahupp/python-magic.git
