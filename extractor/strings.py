@@ -44,5 +44,7 @@ class Strings(BaseExtractor):
         ret = []
         for needle in ['http://', 'https://']:
             for potential_domain in data.split(needle)[1:]:
-                ret.append(self.regex_factory.get_domain().match(potential_domain).group())
+                match = self.regex_factory.get_domain().match(potential_domain)
+                if match:
+                    ret.append(match.group())
         return list(set(ret))
