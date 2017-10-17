@@ -7,6 +7,8 @@ class Ports(BaseExtractor):
         self.pe = pe
 
     def extract(self, sample):
+        sample.imphash = self.pe.get_imphash()
+
         if hasattr(self.pe, 'DIRECTORY_ENTRY_EXPORT'):
             rva = self.pe.DIRECTORY_ENTRY_EXPORT.struct.Name
 
