@@ -118,7 +118,11 @@ class DateTimeEncoder(json.JSONEncoder):
 if args.server:
     import requests
 
-    r = requests.post(args.server, data=json.dumps(out, cls=DateTimeEncoder))
+    r = requests.post(
+        args.server,
+        data=(json.dumps(out, cls=DateTimeEncoder)),
+        headers={'Content-type': 'content_type_value'}
+    )
     if r.status_code != 200:
         raise Exception('HTTP Error %i: %s' % (r.status_code, r.content))
 elif args.pretty:
