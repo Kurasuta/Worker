@@ -23,6 +23,7 @@ parser.add_argument('--debug', action='store_true', help='Show debugging informa
 parser.add_argument('--pretty', action='store_true', help='Uses pretty print')
 parser.add_argument('--performance', action='store_true', help='Measure performance and output report')
 parser.add_argument('--filter', help='Specify pattern that output fields must match')
+parser.add_argument('--skip', help='Specify pattern of extractors to skip')
 parser.add_argument('--server', help='URL of Kurasuta backend REST API')
 parser.add_argument('file_name', metavar='FILENAME', help='file to process')
 args = parser.parse_args()
@@ -56,6 +57,9 @@ def get_extractors():
             continue
 
         if not os.path.isfile(os.path.join(script_folder, 'extractor', extractor_file_name)):
+            continue
+
+        if args.skip and args.skip in extractor_file_name:
             continue
 
         module = importlib.import_module('.'.join(['extractor', extractor_file_name[:-3]]))
