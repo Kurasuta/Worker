@@ -6,6 +6,7 @@ import os
 import json
 import sys
 import pefile
+from datetime import datetime
 
 from graphite import Graphite
 from lib.performance import PerformanceTimer, NullTimer
@@ -107,16 +108,26 @@ for extractor in extractors:
 
 timer.mark('output')
 out = JsonFactory(args.filter).from_sample(sample)
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
+
 if args.server:
     import requests
 
-    requests.post(args.server, data=json.dumps(out))
+    requests.post(args.server, data=json.dumps(out, cls=DateTimeEncoder))
 elif args.pretty:
     from pprint import pprint
 
     pprint(out)
 else:
-    print(json.dumps(out))
+    print(json.dumps(out, cls=DateTimeEncoder))
 timer.mark('end')
 
 if args.performance:
