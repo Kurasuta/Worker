@@ -5,12 +5,10 @@ import logging
 import os
 import json
 import sys
-from pprint import pprint
-
 import pefile
 
 from graphite import Graphite
-from lib.performance import PerformanceTimer, NullTimer, SubTimer
+from lib.performance import PerformanceTimer, NullTimer
 from lib.regex import RegexFactory
 from lib.data import Sample, JsonFactory
 from peyd.peyd import PEiDDataBase
@@ -25,6 +23,7 @@ parser.add_argument('--debug', action='store_true', help='Show debugging informa
 parser.add_argument('--pretty', action='store_true', help='Uses pretty print')
 parser.add_argument('--performance', action='store_true', help='Measure performance and output report')
 parser.add_argument('--filter', help='Specify pattern that output fields must match')
+parser.add_argument('--server', help='URL of Kurasuta backend REST API')
 parser.add_argument('file_name', metavar='FILENAME', help='file to process')
 args = parser.parse_args()
 
@@ -108,7 +107,13 @@ for extractor in extractors:
 
 timer.mark('output')
 out = JsonFactory(args.filter).from_sample(sample)
-if args.pretty:
+if args.server:
+    import requests
+
+    requests.post(args.server, data=out)
+elif args.pretty:
+    from pprint import pprint
+
     pprint(out)
 else:
     print(json.dumps(out))
