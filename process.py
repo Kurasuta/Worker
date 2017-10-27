@@ -110,7 +110,7 @@ out = JsonFactory(args.filter).from_sample(sample)
 if args.server:
     import requests
 
-    requests.post(args.server, data=out)
+    requests.post(args.server, data=json.dumps(out))
 elif args.pretty:
     from pprint import pprint
 
