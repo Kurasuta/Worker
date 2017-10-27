@@ -8,7 +8,6 @@ import sys
 import pefile
 from datetime import datetime
 
-from graphite import Graphite
 from lib.performance import PerformanceTimer, NullTimer
 from lib.regex import RegexFactory
 from lib.data import Sample, JsonFactory
@@ -39,12 +38,6 @@ if 'RAVEN_CLIENT_STRING' in os.environ:
 else:
     sentry = None
     logger.warning('Environment variable RAVEN_CLIENT_STRING does not exist. No logging to Sentry is performed.')
-
-if 'GRAPHITE_SERVER' in os.environ:
-    graphite = Graphite(os.environ['GRAPHITE_SERVER'])
-else:
-    graphite = None
-    logger.warning('Environment variable GRAPHITE_SERVER does not exist. No logging to Graphite is performed.')
 
 regex_factory = RegexFactory()
 timer.mark('read_file')
@@ -121,7 +114,9 @@ class DateTimeEncoder(json.JSONEncoder):
 if args.server:
     import requests
 
-    requests.post(args.server, data=json.dumps(out, cls=DateTimeEncoder))
+    r = requests.post(args.server, data=json.dumps(out, cls=DateTimeEncoder))
+    if r.status_code != 200:
+        raise Exception('HTTP Error %i: %s' % (r.status_code, r.content))
 elif args.pretty:
     from pprint import pprint
 
