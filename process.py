@@ -123,8 +123,8 @@ if args.server:
 
     r = requests.post(
         args.server,
-        data=(json.dumps(out, cls=DateTimeEncoder)),
-        headers={'Content-type': 'content_type_value'}
+        data=json.dumps(out, cls=DateTimeEncoder),
+        headers={'Content-type': 'application/json'}
     )
     if r.status_code != 200:
         raise Exception('HTTP Error %i: %s' % (r.status_code, r.content))
