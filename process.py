@@ -86,7 +86,7 @@ def get_extractors():
                 if parameter == 'data': kwargs['data'] = file_data
                 if parameter == 'logger': kwargs['logger'] = logger
                 if parameter == 'regex_factory': kwargs['regex_factory'] = regex_factory
-                if parameter == 'peyd': kwargs['peyd'] = peyd if args.args.peyd else None
+                if parameter == 'peyd': kwargs['peyd'] = peyd if args.peyd else None
                 if parameter == 'timer': kwargs['timer'] = timer
 
             extractors[name] = class_object(**kwargs)
