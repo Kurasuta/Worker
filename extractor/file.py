@@ -32,5 +32,6 @@ class File(BaseExtractor):
         if hasattr(self.pe, 'FILE_HEADER'):
             sample.build_timestamp = datetime.utcfromtimestamp(self.pe.FILE_HEADER.TimeDateStamp)
 
-        timer.mark('peyd')
-        sample.peyd = [m for m in self.peyd.all_matches(self.pe)]
+        if self.peyd:
+            timer.mark('peyd')
+            sample.peyd = [m for m in self.peyd.all_matches(self.pe)]

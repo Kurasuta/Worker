@@ -11,7 +11,6 @@ from datetime import datetime
 from lib.performance import PerformanceTimer, NullTimer
 from lib.regex import RegexFactory
 from lib.data import Sample, JsonFactory
-from peyd.peyd import PEiDDataBase
 
 logging.basicConfig(format='%(asctime)s %(message)s')
 logger = logging.getLogger('KurasutaWorker')
@@ -25,6 +24,7 @@ parser.add_argument('--performance', action='store_true', help='Measure performa
 parser.add_argument('--filter', help='Specify pattern that output fields must match')
 parser.add_argument('--skip', help='Specify pattern of extractors to skip')
 parser.add_argument('--server', help='URL of Kurasuta backend REST API')
+parser.add_argument('--peyd', action='store_true', help='enable peyd')
 parser.add_argument('file_name', metavar='FILENAME', help='file to process')
 args = parser.parse_args()
 
@@ -46,8 +46,11 @@ file_data = open(args.file_name, 'rb').read()
 timer.mark('parse_pe')
 pe = pefile.PE(data=file_data)
 timer.mark('init_peyd')
-peyd = PEiDDataBase()
-peyd.readfile(os.path.join(os.path.dirname(__file__), 'peyd', 'peyd.txt'))
+if args.peyd:
+    from peyd.peyd import PEiDDataBase
+
+    peyd = PEiDDataBase()
+    peyd.readfile(os.path.join(os.path.dirname(__file__), 'peyd', 'peyd.txt'))
 
 
 def get_extractors():
@@ -83,7 +86,7 @@ def get_extractors():
                 if parameter == 'data': kwargs['data'] = file_data
                 if parameter == 'logger': kwargs['logger'] = logger
                 if parameter == 'regex_factory': kwargs['regex_factory'] = regex_factory
-                if parameter == 'peyd': kwargs['peyd'] = peyd
+                if parameter == 'peyd': kwargs['peyd'] = peyd if args.args.peyd else None
                 if parameter == 'timer': kwargs['timer'] = timer
 
             extractors[name] = class_object(**kwargs)
