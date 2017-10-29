@@ -12,7 +12,9 @@ class Ports(BaseExtractor):
         if hasattr(self.pe, 'DIRECTORY_ENTRY_EXPORT'):
             rva = self.pe.DIRECTORY_ENTRY_EXPORT.struct.Name
 
-            sample.export_name = self.pe.get_string_at_rva(rva)
+            export_name = self.pe.get_string_at_rva(rva)
+            if export_name:
+                sample.export_name = export_name.decode('utf-8')
             if len(self.pe.DIRECTORY_ENTRY_EXPORT.symbols) > 0:
                 sample.exports = []
                 for pe_export in self.pe.DIRECTORY_ENTRY_EXPORT.symbols:
