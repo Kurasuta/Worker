@@ -121,6 +121,7 @@ class DateTimeEncoder(json.JSONEncoder):
 if args.server:
     import requests
     import subprocess
+    import socket
 
     git_revision = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip().decode('utf-8')
     r = requests.post(
@@ -128,7 +129,7 @@ if args.server:
         data=json.dumps(out, cls=DateTimeEncoder),
         headers={
             'Content-type': 'application/json',
-            'User-Agent': 'Kurasuta Worker rev-%s' % git_revision
+            'User-Agent': 'Kurasuta Worker (%s-%s)' % (socket.gethostname(), git_revision)
         }
     )
     if r.status_code != 200:
