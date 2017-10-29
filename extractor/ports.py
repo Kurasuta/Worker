@@ -30,5 +30,6 @@ class Ports(BaseExtractor):
                         imp = SampleImport()
                         imp.dll_name = entry.dll.decode('utf-8')
                         imp.address = pe_imp.address
-                        imp.name = pe_imp.name.decode('utf-8')
+                        if pe_imp.name:
+                            imp.name = pe_imp.name.decode('utf-8')
                         sample.imports.append(imp)
