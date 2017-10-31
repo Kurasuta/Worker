@@ -19,7 +19,7 @@ class Ports(BaseExtractor):
                 sample.exports = []
                 for pe_export in self.pe.DIRECTORY_ENTRY_EXPORT.symbols:
                     export = SampleExport()
-                    export.address = hex(self.pe.OPTIONAL_HEADER.ImageBase + pe_export.address)
+                    export.address = self.pe.OPTIONAL_HEADER.ImageBase + pe_export.address
                     export.name = pe_export.name
                     export.ordinal = pe_export.ordinal
                     sample.exports.append(export)
