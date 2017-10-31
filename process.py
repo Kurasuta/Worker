@@ -124,8 +124,9 @@ if args.server:
     import socket
 
     git_revision = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip().decode('utf-8')
+
     r = requests.post(
-        args.server,
+        '%s/sha256/%s' % (args.server, sample.hash_sha256),
         data=json.dumps(out, cls=DateTimeEncoder),
         headers={
             'Content-type': 'application/json',
