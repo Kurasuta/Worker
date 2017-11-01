@@ -6,11 +6,12 @@ import os
 import json
 import sys
 import pefile
-from datetime import datetime
 
 from lib.performance import PerformanceTimer, NullTimer
 from lib.regex import RegexFactory
 from lib.sample import Sample, JsonFactory
+from lib.general import DateTimeEncoder, KurasutaApi, KurasutaSystem
+from lib.task import TaskFactory
 
 logging.basicConfig(format='%(asctime)s %(message)s')
 logger = logging.getLogger('KurasutaWorker')
@@ -25,7 +26,9 @@ parser.add_argument('--filter', help='Specify pattern that output fields must ma
 parser.add_argument('--skip', help='Specify pattern of extractors to skip')
 parser.add_argument('--server', help='URL of Kurasuta backend REST API')
 parser.add_argument('--peyd', action='store_true', help='enable peyd')
-parser.add_argument('file_name', metavar='FILENAME', help='file to process')
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument('--acquire_task', action='store_true', help='get task from server')
+group.add_argument('--file_name', help='file to process')
 args = parser.parse_args()
 
 timer = PerformanceTimer(logger) if args.performance else NullTimer()
@@ -40,9 +43,46 @@ else:
     sentry = None
     logger.warning('Environment variable RAVEN_CLIENT_STRING does not exist. No logging to Sentry is performed.')
 
+kurasuta_api = KurasutaApi(args.server) if args.server else None
+
+if 'KURASUTA_STORAGE' not in os.environ:
+    raise Exception('environment variable KURASUTA_STORAGE missing')
+
+kurasuta_sys = KurasutaSystem(os.environ['KURASUTA_STORAGE'])
+
+task = None
+
+if args.file_name:
+    file_name = args.file_name
+    if not os.path.exists(file_name) or os.path.isdir(file_name):
+        raise Exception('"%s" does not exist' % file_name)
+else:  # args.acquire_task
+    if not args.server:
+        raise Exception('--acquire_task requires --server')
+    import requests
+
+    r = requests.post(
+        kurasuta_api.get_task_url(),
+        data=json.dumps({'name': kurasuta_sys.get_host(), 'plugins': ['PEMetadata']}),
+        headers={
+            'Content-type': 'application/json',
+            'User-Agent': kurasuta_api.get_user_agent()
+        }
+    )
+    if r.status_code != 200:
+        raise Exception('HTTP Error %i: %s' % (r.status_code, r.content))
+
+    task_factory = TaskFactory()
+    response = r.json()
+    if not response:
+        exit()  # no task to do
+    task = task_factory.response_from_json(response)
+    file_name = os.path.join(kurasuta_sys.get_hash_dir(task.payload['hash_sha256']), task.payload['hash_sha256'])
+    print(file_name)
+
 regex_factory = RegexFactory()
 timer.mark('read_file')
-file_data = open(args.file_name, 'rb').read()
+file_data = open(file_name, 'rb').read()
 timer.mark('parse_pe')
 pe = pefile.PE(data=file_data)
 timer.mark('init_peyd')
@@ -108,33 +148,22 @@ for extractor in extractors:
 
 timer.mark('output')
 out = JsonFactory(args.filter).from_sample(sample)
-
-
-class DateTimeEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, datetime):
-            return o.isoformat()
-
-        return json.JSONEncoder.default(self, o)
-
+if task: out['task_id'] = task.id
 
 if args.server:
     import requests
-    import subprocess
-    import socket
-
-    git_revision = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip().decode('utf-8')
 
     r = requests.post(
-        '%s/sha256/%s' % (args.server, sample.hash_sha256),
+        kurasuta_api.get_sha256_url(sample.hash_sha256),
         data=json.dumps(out, cls=DateTimeEncoder),
         headers={
             'Content-type': 'application/json',
-            'User-Agent': 'Kurasuta Worker (%s-%s)' % (socket.gethostname(), git_revision)
+            'User-Agent': kurasuta_api.get_user_agent()
         }
     )
     if r.status_code != 200:
         raise Exception('HTTP Error %i: %s' % (r.status_code, r.content))
+    print(r.content)
 elif args.pretty:
     from pprint import pprint
 
