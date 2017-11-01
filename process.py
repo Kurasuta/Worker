@@ -78,7 +78,6 @@ else:  # args.acquire_task
         exit()  # no task to do
     task = task_factory.response_from_json(response)
     file_name = os.path.join(kurasuta_sys.get_hash_dir(task.payload['hash_sha256']), task.payload['hash_sha256'])
-    print(file_name)
 
 regex_factory = RegexFactory()
 timer.mark('read_file')
@@ -163,7 +162,6 @@ if args.server:
     )
     if r.status_code != 200:
         raise Exception('HTTP Error %i: %s' % (r.status_code, r.content))
-    print(r.content)
 elif args.pretty:
     from pprint import pprint
 
