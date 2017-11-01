@@ -3,7 +3,7 @@ import hashlib
 import ssdeep
 
 from lib.regex import entropy, null_terminate_and_decode_utf8
-from lib.data import SampleSection
+from lib.sample import SampleSection
 from .base import BaseExtractor
 
 

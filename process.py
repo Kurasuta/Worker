@@ -10,7 +10,7 @@ from datetime import datetime
 
 from lib.performance import PerformanceTimer, NullTimer
 from lib.regex import RegexFactory
-from lib.data import Sample, JsonFactory
+from lib.sample import Sample, JsonFactory
 
 logging.basicConfig(format='%(asctime)s %(message)s')
 logger = logging.getLogger('KurasutaWorker')

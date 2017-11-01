@@ -1,4 +1,4 @@
-from lib.data import SampleExport, SampleImport
+from lib.sample import SampleExport, SampleImport
 from .base import BaseExtractor
 
 

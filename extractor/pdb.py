@@ -1,7 +1,7 @@
 from datetime import datetime
 from .base import BaseExtractor
 from lib.regex import null_terminate_and_decode_utf8
-from lib.data import SampleDebugDirectory
+from lib.sample import SampleDebugDirectory
 
 
 class Pdb(BaseExtractor):
