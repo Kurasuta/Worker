@@ -75,6 +75,9 @@ else:  # args.acquire_task
     task_factory = TaskFactory()
     response = r.json()
     if not response:
+        import time
+
+        time.sleep(2)
         exit()  # no task to do
     task = task_factory.response_from_json(response)
     file_name = os.path.join(kurasuta_sys.get_hash_dir(task.payload['hash_sha256']), task.payload['hash_sha256'])
