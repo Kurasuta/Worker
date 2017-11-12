@@ -12,7 +12,7 @@ kurasuta_sys = KurasutaSystem(os.environ['KURASUTA_STORAGE'])
 
 
 for file_name in sys.argv[1:]:
-    with open(file_name) as fp:
+    with open(file_name, 'rb') as fp:
         content = fp.read()
         fp.close()
     sha256 = hashlib.sha256(content).hexdigest()
