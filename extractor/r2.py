@@ -35,10 +35,14 @@ class R2(BaseExtractor):
             sample_func.type = r2_func['type']
 
             disassem = json.loads(r2.cmd('pdj @' + r2_func['name']))  # disassemble (to JSON)
-            cleaned_opcodes = [self._clean_ops(instr['opcode']) for instr in disassem if 'opcode' in instr]
-            data = ''.join(cleaned_opcodes)
-            sample_func.cleaned_opcodes_sha256 = hashlib.sha256(data)
-            sample_func.cleaned_opcodes_crc16 = crcmod.Crc(16).new(data).hexdigest()
+            opcodes = [instr['opcode'] for instr in disassem if 'opcode' in instr]
+            cleaned_opcodes = [self._clean_ops(opcode) for opcode in opcodes]
+            data = b''.join(opcodes)
+            sample_func.opcodes_sha256 = hashlib.sha256(data).hexdigest()
+            sample_func.opcodes_crc32 = crcmod.Crc(0x104c11db7).new(data).hexdigest().lower()
+            cleaned_data = b''.join(cleaned_opcodes)
+            sample_func.cleaned_opcodes_sha256 = hashlib.sha256(cleaned_data).hexdigest()
+            sample_func.cleaned_opcodes_crc32 = crcmod.Crc(0x104c11db7).new(cleaned_data).hexdigest().lower()
 
             sample.functions.append(sample_func)
 
@@ -47,4 +51,4 @@ class R2(BaseExtractor):
         ret = opcode
         ret = re.sub('\\b0x[0-9a-f]{6}\\b', 'CLEANED', ret)
         ret = re.sub('\\.[0-9a-f]{8}\\b', '.CLEANED', ret)
-        return ret
+        return ret.encode('utf-8')
