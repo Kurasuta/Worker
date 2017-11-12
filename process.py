@@ -26,6 +26,7 @@ parser.add_argument('--filter', help='Specify pattern that output fields must ma
 parser.add_argument('--skip', help='Specify pattern of extractors to skip')
 parser.add_argument('--server', help='URL of Kurasuta backend REST API')
 parser.add_argument('--peyd', action='store_true', help='enable peyd')
+parser.add_argument('--r2', action='store_true', help='enable r2')
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--acquire_task', action='store_true', help='get task from server')
 group.add_argument('--file_name', help='file to process')
@@ -87,8 +88,8 @@ timer.mark('read_file')
 file_data = open(file_name, 'rb').read()
 timer.mark('parse_pe')
 pe = pefile.PE(data=file_data)
-timer.mark('init_peyd')
 if args.peyd:
+    timer.mark('init_peyd')
     from peyd.peyd import PEiDDataBase
 
     peyd = PEiDDataBase()
@@ -107,8 +108,8 @@ def get_extractors():
         if args.skip and args.skip in extractor_file_name:
             continue
 
-        module = importlib.import_module('.'.join(['extractor', extractor_file_name[:-3]]))
-        for name, class_object in inspect.getmembers(module):
+        extractor_module = importlib.import_module('.'.join(['extractor', extractor_file_name[:-3]]))
+        for name, class_object in inspect.getmembers(extractor_module):
             if name in extractors.keys():
                 raise Exception('Duplicate Extractor name: %s' % name)
             if not inspect.isclass(class_object):
@@ -117,15 +118,20 @@ def get_extractors():
 
             if len(class_object.__bases__) != 1:
                 continue
+
             base_class = class_object.__bases__[0]
-            if base_class.__name__ != 'BaseExtractor':
+            if base_class.__name__ != 'BaseExtractor':  # only use classes that are derived from BaseExtractor
                 continue
+            if class_object.__name__ == 'R2':
+                if not args.r2 and not task:
+                    continue
 
             kwargs = {}
             for parameter in signature.parameters:
                 if parameter == 'self': continue
                 if parameter == 'pe': kwargs['pe'] = pe
                 if parameter == 'data': kwargs['data'] = file_data
+                if parameter == 'file_name': kwargs['file_name'] = file_name
                 if parameter == 'logger': kwargs['logger'] = logger
                 if parameter == 'regex_factory': kwargs['regex_factory'] = regex_factory
                 if parameter == 'peyd': kwargs['peyd'] = peyd if args.peyd else None
