@@ -15,7 +15,6 @@ class R2(BaseExtractor):
         r2 = r2pipe.open(self.file_name)
         r2.cmd('aaa')  # analyse all
         sample.functions = []
-        from pprint import pprint
         for r2_func in json.loads(r2.cmd('aflj')):  # list all functions (to JSON)
             sample_func = SampleFunction()
             sample_func.offset = r2_func['offset']
