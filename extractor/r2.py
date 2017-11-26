@@ -33,11 +33,11 @@ class R2(BaseExtractor):
             sample_func.outdegree = r2_func['outdegree']
             sample_func.type = r2_func['type']
 
-            sample_func.raw = json.loads(r2.cmd('pdj @' + r2_func['name']))  # disassemble (to JSON)
-            opcodes = [instr['opcode'] for instr in sample_func.raw if 'opcode' in instr]
-            cleaned_opcodes = [self._clean_ops(opcode) for opcode in opcodes]
+            instructions = json.loads(r2.cmd('pdj @' + r2_func['name']))  # disassemble (to JSON)
+            sample_func.opcodes = [instr['opcode'] for instr in instructions if 'opcode' in instr]
+            cleaned_opcodes = [self._clean_ops(opcode) for opcode in sample_func.opcodes]
 
-            data = (''.join(opcodes)).encode('utf-8')
+            data = (''.join(sample_func.opcodes)).encode('utf-8')
             sample_func.opcodes_sha256 = hashlib.sha256(data).hexdigest()
             sample_func.opcodes_crc32 = crcmod.Crc(0x104c11db7).new(data).hexdigest().lower()
 
