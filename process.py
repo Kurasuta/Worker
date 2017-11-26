@@ -6,6 +6,7 @@ import os
 import json
 import sys
 import pefile
+import time
 
 from lib.performance import PerformanceTimer, NullTimer
 from lib.regex import RegexFactory
@@ -64,7 +65,7 @@ else:  # args.acquire_task
 
     r = requests.post(
         kurasuta_api.get_task_url(),
-        data=json.dumps({'name': kurasuta_sys.get_host(), 'plugins': ['PEMetadata']}),
+        data=json.dumps({'name': kurasuta_sys.get_host(), 'plugins': ['PEMetadata', 'R2Disassembly']}),
         headers={
             'Content-type': 'application/json',
             'User-Agent': kurasuta_api.get_user_agent()
@@ -73,21 +74,19 @@ else:  # args.acquire_task
     if r.status_code != 200:
         raise Exception('HTTP Error %i: %s' % (r.status_code, r.content))
 
-    task_factory = TaskFactory()
     response = r.json()
     if not response:
-        import time
-
-        time.sleep(2)
-        exit()  # no task to do
-    task = task_factory.response_from_json(response)
+        logger.info('No task found, waiting for 10 seconds.')
+        time.sleep(10)
+        exit()
+    task = TaskFactory().response_from_json(response)
     file_name = os.path.join(kurasuta_sys.get_hash_dir(task.payload['hash_sha256']), task.payload['hash_sha256'])
 
 regex_factory = RegexFactory()
 timer.mark('read_file')
 file_data = open(file_name, 'rb').read()
 timer.mark('parse_pe')
-pe = pefile.PE(data=file_data)
+pe = pefile.PE(data=file_data)  # TODO only parse PE if necessary (not in case of R2Disassembly for example
 if args.peyd:
     timer.mark('init_peyd')
     from peyd.peyd import PEiDDataBase
@@ -96,7 +95,7 @@ if args.peyd:
     peyd.readfile(os.path.join(os.path.dirname(__file__), 'peyd', 'peyd.txt'))
 
 
-def get_extractors():
+def get_extractors(r2_only):
     extractors = {}
     for extractor_file_name in os.listdir(os.path.join(script_folder, 'extractor')):
         if not extractor_file_name.endswith('.py'):
@@ -123,8 +122,10 @@ def get_extractors():
             if base_class.__name__ != 'BaseExtractor':  # only use classes that are derived from BaseExtractor
                 continue
             if class_object.__name__ == 'R2':
-                if not args.r2 and not task:
+                if not r2_only:
                     continue
+            elif r2_only and class_object.__name__ != 'File':  # enable Files decoder to have SHA256 hash in sample
+                continue
 
             kwargs = {}
             for parameter in signature.parameters:
@@ -143,7 +144,7 @@ def get_extractors():
 
 timer.mark('read_extractors')
 sample = Sample()
-extractors = get_extractors().values()
+extractors = get_extractors(args.r2 or (task and task.type == 'R2Disassembly')).values()
 logger.debug('Enabled Extractors: %s' % extractors)
 for extractor in extractors:
     timer.mark('extractor_%s' % extractor.__class__.__name__)
