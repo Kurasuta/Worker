@@ -160,11 +160,11 @@ out = JsonFactory(args.filter).from_sample(sample)
 if task:
     out['task_id'] = task.id
     if 'source_id' in task.payload.keys():
-        out['source_id'] = task['source_id']
+        out['source_id'] = task.payload['source_id']
     if 'tags' in task.payload.keys():
-        out['tags'] = task['tags']
+        out['tags'] = task.payload['tags']
     if 'file_names' in task.payload.keys():
-        out['file_names'] = task['file_names']
+        out['file_names'] = task.payload['file_names']
 
 if args.server:
     import requests
