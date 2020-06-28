@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Interacts with the Backend API to acquire tasking, performs the work and sends data to the same Backend API.
+"""
 import argparse
 import importlib
 import inspect
@@ -29,7 +34,7 @@ parser.add_argument('--server', help='URL of Kurasuta backend REST API')
 parser.add_argument('--peyd', action='store_true', help='enable peyd')
 parser.add_argument('--r2', action='store_true', help='enable r2')
 group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument('--acquire_task', action='store_true', help='get task from server')
+group.add_argument('--acquire-task', action='store_true', help='get task from server')
 group.add_argument('--file_name', help='file to process')
 args = parser.parse_args()
 
@@ -60,7 +65,7 @@ if args.file_name:
         raise Exception('"%s" does not exist' % file_name)
 else:  # args.acquire_task
     if not args.server:
-        raise Exception('--acquire_task requires --server')
+        raise Exception('--acquire-task requires --server')
     import requests
 
     r = requests.post(
